@@ -183,7 +183,7 @@ $_SESSION['snapToken'] = $snapToken;
 
                     <?php if (isset($_SESSION['productItems'])) : ?>
                         <div class="mt-4 text-end">
-                            <button type="button" class="btn btn-primary px-4 mx-1" id="saveOrder" disabled><i class="fa fa-upload" aria-hidden="true"></i> Simpan</button>
+                            <button type="button" class="btn btn-primary px-4 mx-1" id="saveOrder"><i class="fa fa-upload" aria-hidden="true"></i> Simpan</button>
                             <button class="btn btn-info px-4 mx-1" onclick="printMyBillingArea()"><i class="fa fa-print" aria-hidden="true"></i> Cetak</button>
                             <a id="pay-button" class="btn btn-outline-success">Bayar Sekarang!</a>
                             <button type="button" onclick="downloadPDF('<?= $_SESSION['invoice_no'] ?>')" class="btn btn-warning"><i class="fa fa-download" aria-hidden="true"></i> Download PDF</button>
@@ -204,7 +204,7 @@ $_SESSION['snapToken'] = $snapToken;
         snap.pay('<?php echo $snapToken; ?>', {
             onSuccess: function(result) {
                 console.log("Payment success:", result);
-                document.getElementById('saveOrder').disabled = false;
+                // document.getElementById('saveOrder').disabled = false;
                 document.querySelector('.selesai').click();
             },
             onPending: function(result) {
