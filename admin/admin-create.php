@@ -1,15 +1,23 @@
 <?php include('includes/header.php'); 
-if (($_SESSION['loggedInUser']['level'] != 'Admin')) {
 
+$userLevel = $_SESSION['loggedInUser']['level'];
+
+if ($userLevel != 'Admin' && $userLevel != 'Manajer') {
     echo '<script>window.location.href = "index.php";</script>';
-
 }
 ?>
 
 <div class="container-fluid px-4">
     <div class="card mt-4">
         <div class="card-header">
-            <h4 class="mb-0 text-center">Tambahkan Admin
+            <h4 class="mb-0 text-center">
+                <?php 
+                    if ($userLevel == 'Manajer') {
+                        echo 'Tambah Staff/Manajer';
+                    } else {
+                        echo 'Tambahkan Admin';
+                    }
+                ?>
                 <a href="admin.php" class="btn btn-danger float-end"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</a>
             </h4>
         </div>
@@ -44,7 +52,11 @@ if (($_SESSION['loggedInUser']['level'] != 'Admin')) {
                     <div class="col-md-12 mb-3">
                         <label for="name2">Role</label>
                         <select name="level" id="level" class="form-select">
-                            <option value="Admin">Admin</option>
+                            <?php 
+                                if ($userLevel == 'Admin') {
+                                    echo '<option value="Admin">Admin</option>';
+                                }
+                            ?>
                             <option value="Staff">Staff</option>
                             <option value="Manajer">Manajer</option>
                         </select>
@@ -60,9 +72,8 @@ if (($_SESSION['loggedInUser']['level'] != 'Admin')) {
                 </div>
                 <div class="col-md-12 mb-3 text-end">
                     <button type="submit" name="saveAdmin" class="btn btn-primary">Save</button>
-         </div>
-
-
+                </div>
+            </form>
         </div>
     </div>
 </div>

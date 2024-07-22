@@ -1,5 +1,5 @@
 <?php
-include('includes/header.php');
+include ('includes/header.php');
 global $conn;
 
 // Sanitizing the GET parameters to prevent SQL injection
@@ -46,10 +46,14 @@ $result = $conn->query($sql);
                                 <h1>Login History</h1>
                                 <form method="GET" class="form-inline mb-2">
                                     <label for="login_time" class="mr-2">Waktu Aktif:</label>
-                                    <input type="datetime-local" id="login_time" name="login_time" value="<?php echo htmlspecialchars($filterLoginTime); ?>" class="form-control mr-2">
+                                    <input type="datetime-local" id="login_time" name="login_time"
+                                        value="<?php echo htmlspecialchars($filterLoginTime); ?>"
+                                        class="form-control mr-2">
 
                                     <label for="logout_time" class="mr-2">Waktu Keluar:</label>
-                                    <input type="datetime-local" id="logout_time" name="logout_time" value="<?php echo htmlspecialchars($filterLogoutTime); ?>" class="form-control mr-2">
+                                    <input type="datetime-local" id="logout_time" name="logout_time"
+                                        value="<?php echo htmlspecialchars($filterLogoutTime); ?>"
+                                        class="form-control mr-2">
 
                                     <button type="submit" class="btn btn-primary mr-2">Filter</button>
                                     <a href="login-history.php" class="btn btn-danger">Reset</a>
@@ -70,7 +74,7 @@ $result = $conn->query($sql);
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php 
+                                                <?php
                                                 $i = 1;
                                                 while ($row = $result->fetch_assoc()): ?>
                                                     <tr>
@@ -118,4 +122,4 @@ $result = $conn->query($sql);
     </div>
 </div>
 
-<?php include('includes/footer.php'); ?>
+<?php include ('includes/footer.php'); ?>

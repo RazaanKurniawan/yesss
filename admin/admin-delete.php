@@ -18,7 +18,7 @@ if(is_numeric($paraResult)){
 
         $adminDeleteRes = delete('admin', $adminId);
         if($adminDeleteRes){
-            redirect('admin.php', 'Admin berhasil dihapus!');
+            redirect('admin.php', 'Akun berhasil dihapus!');
         }else{
             redirect('admin.php', 'Ada sesuatu yang salah!');
         }

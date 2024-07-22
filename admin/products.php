@@ -73,6 +73,7 @@
                                 <th>Kode Produk</th>
                                 <th>Harga</th>
                                 <th>Stok</th>
+                                <th>Status</th>
                                 <?php if ($_SESSION['loggedInUser']['level'] == 'Admin' || $_SESSION['loggedInUser']['level'] == 'Manajer'): ?>
                                 <th>Aksi</th>
                                 <?php endif; ?>
@@ -88,6 +89,7 @@
                                     <td><?= $item['name']; ?></td>
                                     <td><?= $item['product_code']; ?></td>
                                     <td>Rp.<?= number_format($item['price'], 0, ',', '.'); ?></td>
+                                    <td><?= $item['quantity']; ?></td>
                                     <td>
                                         <?php if ($item['quantity'] <= 0): ?>
                                             <span class="badge bg-danger">Habis</span>

@@ -26,19 +26,33 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script src="https://cdn.datatables.net/v/bs4-4.6.0/dt-2.0.8/af-2.7.0/b-3.0.2/fc-5.0.1/fh-4.0.1/r-3.0.2/sl-2.0.3/datatables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
 
-
 <script>
-    let table = new DataTable('#myTable');
+    var inactivityTime = function () {
+        var time;
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeypress = resetTimer;
 
+        function logout() {
+            window.location.href = '../logout.php?logout=true';
+        }
+
+        function resetTimer() {
+            clearTimeout(time);
+            time = setTimeout(logout, 600000);  // 10 Menit
+        }
+    };
+    inactivityTime();
+
+    let table = new DataTable('#myTable');
     $(document).ready(function () {
         $('.mySelect2').select2();
     });
 
-    document.getElementById('payment_mode').addEventListener('change', function() {
+    document.getElementById('payment_mode').addEventListener('change', function () {
         var paymentMode = this.value;
         var bayarInput = document.getElementById('money');
         if (paymentMode === 'Bayar Online') {
@@ -48,7 +62,7 @@
             bayarInput.disabled = false; // Enable the input field for other payment modes
         }
     });
- 
+
     document.addEventListener('DOMContentLoaded', function () {
         const barcodeInput = document.getElementById('barcode-input');
 
@@ -83,8 +97,6 @@
             xhr.send(new URLSearchParams(new FormData(this)).toString());
         });
     });
-
-    
 </script>
 
 <script src="assets/js/custom.js"></script>

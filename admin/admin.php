@@ -1,6 +1,7 @@
-<?php include ('includes/header.php'); 
-if ($_SESSION['loggedInUser']['level'] != 'Admin') {
+<?php include('includes/header.php'); 
+if ($_SESSION['loggedInUser']['level'] != 'Admin' && $_SESSION['loggedInUser']['level'] != 'Manajer') {
     echo '<script>window.location.href = "index.php";</script>';
+    exit(); // Tambahkan exit untuk memastikan skrip berhenti setelah redirect
 }
 ?>
 
@@ -8,8 +9,13 @@ if ($_SESSION['loggedInUser']['level'] != 'Admin') {
     <div class="card mt-4 shadow-sm">
         <div class="card-header text-center">
             <h4 class="mb-0">
-                Administrator/Pekerja
-                <a href="admin-create.php" class="btn btn-success float-end"><i class="fa fa-plus" aria-hidden="true"></i> Tambah Admin</a>
+                <?php if ($_SESSION['loggedInUser']['level'] == 'Admin') : ?>
+                    Administrator/Pekerja
+                    <a href="admin-create.php" class="btn btn-success float-end"><i class="fa fa-plus" aria-hidden="true"></i> Tambah Admin</a>
+                <?php elseif ($_SESSION['loggedInUser']['level'] == 'Manajer') : ?>
+                    Pekerja
+                    <a href="admin-create.php" class="btn btn-success float-end"><i class="fa fa-plus" aria-hidden="true"></i> Tambah Staff</a>
+                <?php endif; ?>
             </h4>
         </div>
         <div class="card-body">
@@ -23,61 +29,67 @@ if ($_SESSION['loggedInUser']['level'] != 'Admin') {
             }
 
             if (mysqli_num_rows($admin) > 0) {
-
                 $loggedInUserLevel = $_SESSION['loggedInUser']['level'];
-                $sameLevelAdmins = [];
-                $otherLevelAdmins = [];
+                $adminUsers = [];
+                $managerUsers = [];
+                $staffUsers = [];
 
-                // Pisahkan akun dengan level yang sama dari daftar akun lainnya
+                // Pisahkan akun berdasarkan level
                 foreach ($admin as $adminItem) {
-                    if ($adminItem['level'] == $loggedInUserLevel) {
-                        $sameLevelAdmins[] = $adminItem;
-                    } else {
-                        $otherLevelAdmins[] = $adminItem;
+                    if ($adminItem['level'] == 'Admin') {
+                        $adminUsers[] = $adminItem;
+                    } elseif ($adminItem['level'] == 'Manajer') {
+                        $managerUsers[] = $adminItem;
+                    } elseif ($adminItem['level'] == 'Staff') {
+                        $staffUsers[] = $adminItem;
                     }
                 }
-
                 ?>
                 <div class="table-responsive">
-                    <h5>Admin</h5>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th style="width: 10px;">No.</th>
-                                <th>Nama</th>
-                                <th>Email</th>
-                                <th>Bagian</th>
-                                <th>Status</th>
-                                <th style="width: 145px;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $i = 1;
-                            foreach ($sameLevelAdmins as $adminItem): 
-                                ?>
+                    <?php if ($_SESSION['loggedInUser']['level'] == 'Admin') : ?>
+                        <h5>Admin</h5>
+                        <table class="table table-striped table-bordered">
+                            <thead>
                                 <tr>
-                                    <td><?php echo $i++; ?></td>
-                                    <td><?= $adminItem['nama']; ?> <?php if ($adminItem['id'] == $_SESSION['loggedInUser']['user_id']) echo "<span class='badge bg-primary'>Sedang Login</span>"; ?></td>
-                                    <td><?= $adminItem['email']; ?></td>
-                                    <td><?= $adminItem['level']; ?></td>
-                                    <td>
-                                        <?php if ($adminItem['is_ban'] == 1): ?>
-                                            <span class="badge bg-danger">Banned</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-success">Active</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <a href="admin-edit.php?id=<?= $adminItem['id']; ?>" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                        <!-- No delete button for same level users -->
-                                    </td>
+                                    <th style="width: 10px;">No.</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Bagian</th>
+                                    <th>Status</th>
+                                    <th style="width: 145px;">Aksi</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php 
+                                $i = 1;
+                                foreach ($adminUsers as $adminItem): 
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $i++; ?></td>
+                                        <td><?= $adminItem['nama']; ?> <?php if ($adminItem['id'] == $_SESSION['loggedInUser']['user_id']) echo "<span class='badge bg-primary'>Sedang Login</span>"; ?></td>
+                                        <td><?= $adminItem['email']; ?></td>
+                                        <td><?= $adminItem['level']; ?></td>
+                                        <td>
+                                            <?php if ($adminItem['is_ban'] == 1): ?>
+                                                <span class="badge bg-danger">Banned</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-success">Active</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if ($adminItem['id'] == $_SESSION['loggedInUser']['user_id']): ?>
+                                                <a href="admin-edit.php?id=<?= $adminItem['id']; ?>" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                            <?php elseif ($_SESSION['loggedInUser']['level'] == 'Admin'): ?>
+                                                <a href="admin-edit.php?id=<?= $adminItem['id']; ?>" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
 
-                    <h5>Manajer/Pekerja</h5>
+                    <h5>Manajer</h5>
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -92,23 +104,65 @@ if ($_SESSION['loggedInUser']['level'] != 'Admin') {
                         <tbody>
                             <?php 
                             $j = 1;
-                            foreach ($otherLevelAdmins as $adminItem): 
+                            foreach ($managerUsers as $managerItem): 
                                 ?>
                                 <tr>
                                     <td><?php echo $j++; ?></td>
-                                    <td><?= $adminItem['nama']; ?></td>
-                                    <td><?= $adminItem['email']; ?></td>
-                                    <td><?= $adminItem['level']; ?></td>
+                                    <td><?= $managerItem['nama']; ?> <?php if ($managerItem['id'] == $_SESSION['loggedInUser']['user_id']) echo "<span class='badge bg-primary'>Sedang Login</span>"; ?></td>
+                                    <td><?= $managerItem['email']; ?></td>
+                                    <td><?= $managerItem['level']; ?></td>
                                     <td>
-                                        <?php if ($adminItem['is_ban'] == 1): ?>
+                                        <?php if ($managerItem['is_ban'] == 1): ?>
                                             <span class="badge bg-danger">Banned</span>
                                         <?php else: ?>
                                             <span class="badge bg-success">Active</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="admin-edit.php?id=<?= $adminItem['id']; ?>" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                        <a href="admin-delete.php?id=<?= $adminItem['id']; ?>" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                        <?php if ($managerItem['id'] == $_SESSION['loggedInUser']['user_id']): ?>
+                                            <a href="admin-edit.php?id=<?= $managerItem['id']; ?>" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                        <?php elseif ($_SESSION['loggedInUser']['level'] == 'Admin'): ?>
+                                            <a href="admin-edit.php?id=<?= $managerItem['id']; ?>" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                            <a href="admin-delete.php?id=<?= $managerItem['id']; ?>" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <h5>Staff</h5>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px;">No.</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Bagian</th>
+                                <th>Status</th>
+                                <th style="width: 145px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $k = 1;
+                            foreach ($staffUsers as $staffItem): 
+                                ?>
+                                <tr>
+                                    <td><?php echo $k++; ?></td>
+                                    <td><?= $staffItem['nama']; ?></td>
+                                    <td><?= $staffItem['email']; ?></td>
+                                    <td><?= $staffItem['level']; ?></td>
+                                    <td>
+                                        <?php if ($staffItem['is_ban'] == 1): ?>
+                                            <span class="badge bg-danger">Banned</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-success">Active</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <a href="admin-edit.php?id=<?= $staffItem['id']; ?>" class="btn btn-success btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                        <a href="admin-delete.php?id=<?= $staffItem['id']; ?>" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -126,4 +180,4 @@ if ($_SESSION['loggedInUser']['level'] != 'Admin') {
     </div>
 </div>
 
-<?php include ('includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>

@@ -42,7 +42,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], "/") + 
                     <div class="sb-nav-link-icon"><i class="fas fa-cube"></i></div>
                     Produk
                 </a>
-                
+
 
                 <!-- <a class="nav-link <?= ($page == 'categories-create.php') || ($page == 'categories.php') ? 'collapse active' : 'collapsed'; ?>"
                     href="#" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false"
@@ -91,13 +91,16 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], "/") + 
                     Pelanggan
                 </a>
                 <?php
-                if ($_SESSION['loggedInUser']['level'] == 'Admin') {
+                $level = $_SESSION['loggedInUser']['level'];
+                if ($level == 'Admin' || $level == 'Manajer') {
+                    $pageLabel = $level == 'Admin' ? 'Manajer/Pekerja' : 'Pekerja';
                     ?>
                     <a class="nav-link <?= $page == 'admin.php' ? 'active' : ''; ?>" href="admin.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
-                        Administrator/Pekerja
+                        <?= $pageLabel; ?>
                     </a>
                 <?php } ?>
+
 
                 <!-- <a class="nav-link <?= ($page == 'customers-create.php') || ($page == 'customers.php') ? 'collapse active' : 'collapsed'; ?>"
                     href="#" data-bs-toggle="collapse" data-bs-target="#collapseCustomer" aria-expanded="false"
@@ -143,7 +146,9 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], "/") + 
         <style>
             .bg-green {
                 background-color: #24DF00;
-            };
+            }
+
+            ;
         </style>
         <div class="sb-sidenav-footer bg-success">
             <div class="small">Masuk sebagai:</div>

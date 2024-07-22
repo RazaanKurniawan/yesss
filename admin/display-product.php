@@ -71,32 +71,37 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         $(document).ready(function(){
-            $('#scanForm').on('submit', function(event){
-                event.preventDefault();
-                var productCode = $('#productCode').val();
-                $.ajax({
-                    url: 'fetch_product.php',
-                    method: 'POST',
-                    data: {productCode: productCode},
-                    dataType: 'json',
-                    success: function(response){
-                        if(response.success){
-                            $('#productName').text(response.data.name);
-                            $('#productPrice').text('Rp. ' + response.data.price.toLocaleString('id-ID'));
-                            $('#productImage').attr('src', '../'+response.data.image);
-                            $('#productDetails').fadeIn();
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Produk tidak ditemukan',
-                                text: 'Produk dengan kode tersebut tidak ditemukan dalam database.',
-                                showConfirmButton: true,
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    }
-                });
-            });
+    $('#scanForm').on('submit', function(event){
+        event.preventDefault();
+        var productCode = $('#productCode').val();
+        $.ajax({
+            url: 'fetch_product.php',
+            method: 'POST',
+            data: {productCode: productCode},
+            dataType: 'json',
+            success: function(response){
+                if(response.success){
+                    $('#productName').text(response.data.name);
+                    $('#productPrice').text('Rp. ' + response.data.price.toLocaleString('id-ID'));
+                    
+                    // Cek jika gambar tidak tersedia
+                    var imageUrl = response.data.image ? '../' + response.data.image : '../assets/uploads/products/default.png';
+                    $('#productImage').attr('src', imageUrl);
+                    
+                    $('#productDetails').fadeIn();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Produk tidak ditemukan',
+                        text: 'Produk dengan kode tersebut tidak ditemukan dalam database.',
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
         });
+    });
+});
+
     </script>
 
